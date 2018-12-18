@@ -20,7 +20,7 @@ from sklearn.preprocessing import StandardScaler
 
 
 
-
+# import dataset
 train = pd.read_csv('/Users/calvin/python/car project/porsche_data.csv')
 train=train.drop(["Vin"],axis=1)
 
@@ -28,12 +28,13 @@ train=train.drop(["Vin"],axis=1)
 #test=test.drop(test[:800].index,axis=0)
 
 #def function(data, test):
-    
+# adjust data -> pull out label
 train_y= train["Price"]
 train_x= train.drop(["Price"],axis=1)
 #test_y= test["Price"]
 #test_x= test.drop(["Price"],axis=1)
 
+# one hot encoding
 train_x=pd.get_dummies(train_x)
 #test_x=pd.get_dummies(test_x)
 
