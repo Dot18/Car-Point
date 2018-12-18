@@ -34,21 +34,21 @@ train_x= train.drop(["Price"],axis=1)
 #test_y= test["Price"]
 #test_x= test.drop(["Price"],axis=1)
 
-# one hot encoding
+# one hot encoding 
 train_x=pd.get_dummies(train_x)
 #test_x=pd.get_dummies(test_x)
 
-
+# seperate the tesintg set from the big dataset
 test_x=train_x.sample(n=500,random_state=0)
 train=train_x.drop(train_x.sample(n=500,random_state=0).index,axis=0)
 
 test_y=train_y.sample(n=500,random_state=0)
 train=train_y.drop(train_y.sample(n=500,random_state=0).index,axis=0)
 
-
+#seperate dataset to training set and validation set
 train_x, val_x, train_y, val_y = train_test_split(train_x, train_y, test_size=0.3)
 
-#training set
+# fine tune the data type
 train_x=train_x.values
 train_y=train_y.values
 train_y=train_y.reshape(-1,1)
@@ -59,33 +59,15 @@ test_x=test_x.values
 test_y=test_y.values
 test_y=test_y.reshape(-1,1)
 
-
-
-
-
-
-#plt.figure(1)
-#plt.scatter(x="GarageYrBlt", y="SalePrice",data=all_data)
-#plt.show()
-#plt.pause(0.1)
-
-#標準化
+#Standarisation for whitening--------------------------------------------------
+#standarisation
 scaler = StandardScaler()
 scaler.fit(train_x)
 train_x = scaler.transform(train_x)
 val_x = scaler.transform(val_x)
 test_x = scaler.transform(test_x)
 
-#train_y = scaler.transform(train_y) #<---
-
-#getmin = np.min(train_y)
-#getmax = np.max(train_y)
-#train_yn = (train_y - getmin) / (getmax - getmin)
-#val_yn = (val_y - getmin) / (getmax - getmin)
-#test_yn = (val_y - getmin) / (getmax - getmin)
-
-#val_x = scaler.transform(val_x)
-#test = scaler.transform(test)   
+#train_y = scaler.transform(train_y) #<---  
 
 
 #PCA---------------------------------------------------------------------------
@@ -100,27 +82,14 @@ test_x=pca.transform(test_x)
 dimention=train_x.shape[1]
 
 
-
-#Standarisation for whitening--------------------------------------------------
-
-# to avoid roudoff error
-# log-sum-exp trick----------------------------------------------------------
-#case1
-#getmin = np.min(train_y)
-#getmax = np.max(train_y)
-#train_yn = (train_y - getmin) / (getmax - getmin)
-#val_yn = (val_y - getmin) / (getmax - getmin)
-
-## case2
-#train_y=np.log(train_y)
-#val_y=np.log(val_y)
-
 #DEEP LEARNING STRUCTURE-------------------------------------------------------
+
+#calculate the processing time
 import datetime
 starttime = datetime.datetime.now()
 
+#parameter 
 print("DNN start")
-#learning_rate_setting=[0.1,0.01,0.001,0.0001,0.00001,0.000001,0.0000001]
 learning_rate = 0.1
 training_epochs = 200
 display_step = 10
@@ -129,7 +98,7 @@ layer=[600,512,450,400,350,300,256,200,128,100,64,32,8]
 n_samples = train_x.shape[0]
 dropout_rate=0.15
 
-
+# set mini batch
 def get_batch(data_x,data_y,batch_size):
     batch_n=len(data_x)//batch_size
     for i in range(batch_n):
@@ -137,10 +106,10 @@ def get_batch(data_x,data_y,batch_size):
         batch_y=data_y[i*batch_size:(i+1)*batch_size]
         yield batch_x,batch_y
 
-
-
+# DNN start to run
 def neural_net_model(X_data,input_dim):
     
+    # setting moving average in order to accelerate the precessing in the testing set
     epsilon = 0.001
     ema = tf.train.ExponentialMovingAverage(decay=0.5)
     
@@ -155,15 +124,13 @@ def neural_net_model(X_data,input_dim):
     # layer input multiplying and adding bias then activation function
     W_1 = tf.Variable(tf.random_normal([input_dim,layer[0]],mean=0.0,stddev=0.01)*np.sqrt(1/input_dim))
     W_1 = tf.layers.dropout(W_1, rate=dropout_rate, training=tf_is_training)  
-#    W_1 = tf.Variable(tf.random_uniform([input_dim,layer[0]])*np.sqrt(1/input_dim))
     b_1 = tf.Variable(tf.zeros([layer[0]]))
     layer_1 = tf.add(tf.matmul(X_data,W_1), b_1)
     layer_1 = tf.nn.relu(layer_1)
 ################
 
 ################
-    # layer 1 multiplying and adding bias then activation function
-    # layer 1 multiplying and adding bias then activation function
+    # layer 2 multiplying and adding bias then activation function
     W_2 = tf.Variable(tf.random_normal([layer[0],layer[1]],mean=0.0,stddev=0.01)*np.sqrt(1/layer[0]))
     W_2 = tf.layers.dropout(W_2, rate=dropout_rate, training=tf_is_training)  
     b_2 = tf.Variable(tf.zeros([layer[1]]))
@@ -178,8 +145,7 @@ def neural_net_model(X_data,input_dim):
 ################
     
 ################    
-    # layer 2 multiplying and adding bias then activation function
-    # layer 2 multiplying and adding bias then activation function
+    # layer 3 multiplying and adding bias then activation function
     W_3 = tf.Variable(tf.random_normal([layer[1],layer[2]],mean=0.0,stddev=0.01)*np.sqrt(1/layer[1]))
     W_3 = tf.layers.dropout(W_3, rate=dropout_rate, training=tf_is_training)  
 
@@ -194,7 +160,7 @@ def neural_net_model(X_data,input_dim):
 ################
     
 ################
-    # layer 2 multiplying and adding bias then activation function
+    # layer 4 multiplying and adding bias then activation function
     W_4 = tf.Variable(tf.random_normal([layer[2],layer[3]],mean=0.0,stddev=0.01)*np.sqrt(1/layer[2]))
     W_4 = tf.layers.dropout(W_4, rate=dropout_rate, training=tf_is_training)  
     b_4 = tf.Variable(tf.zeros([layer[3]]))
@@ -209,7 +175,7 @@ def neural_net_model(X_data,input_dim):
 ################
     
 ################
-    # layer 2 multiplying and adding bias then activation function
+    # layer 5 multiplying and adding bias then activation function
     W_5 = tf.Variable(tf.random_normal([layer[3],layer[4]],mean=0.0,stddev=0.01)*np.sqrt(1/layer[3]))
     W_5 = tf.layers.dropout(W_5, rate=dropout_rate, training=tf_is_training)  
     b_5 = tf.Variable(tf.zeros([layer[4]]))
@@ -224,7 +190,7 @@ def neural_net_model(X_data,input_dim):
 ################
     
 ################
-    # layer 2 multiplying and adding bias then activation function
+    # layer 6 multiplying and adding bias then activation function
     W_6 = tf.Variable(tf.random_normal([layer[4],layer[5]],mean=0.0,stddev=0.01)*np.sqrt(1/layer[4]))
     W_6 = tf.layers.dropout(W_6, rate=dropout_rate, training=tf_is_training)  
     b_6 = tf.Variable(tf.zeros([layer[5]]))
@@ -239,7 +205,7 @@ def neural_net_model(X_data,input_dim):
 ################
     
 ################
-    # layer 2 multiplying and adding bias then activation function
+    # layer 7 multiplying and adding bias then activation function
     W_7 = tf.Variable(tf.random_normal([layer[5],layer[6]],mean=0.0,stddev=0.01)*np.sqrt(1/layer[5]))
     W_7 = tf.layers.dropout(W_7, rate=dropout_rate, training=tf_is_training)  
     b_7 = tf.Variable(tf.zeros([layer[6]]))
@@ -254,7 +220,7 @@ def neural_net_model(X_data,input_dim):
 ################
     
 ################
-    # layer 2 multiplying and adding bias then activation function
+    # layer 8 multiplying and adding bias then activation function
     W_8 = tf.Variable(tf.random_normal([layer[6],layer[7]],mean=0.0,stddev=0.01)*np.sqrt(1/layer[6]))
     W_8 = tf.layers.dropout(W_8, rate=dropout_rate, training=tf_is_training)  
     b_8 = tf.Variable(tf.zeros([layer[7]]))
@@ -269,7 +235,7 @@ def neural_net_model(X_data,input_dim):
 ################
     
 ################
-    # layer 2 multiplying and adding bias then activation function
+    # layer 9 multiplying and adding bias then activation function
     W_9 = tf.Variable(tf.random_normal([layer[7],layer[8]],mean=0.0,stddev=0.01)*np.sqrt(1/layer[7]))
     W_9 = tf.layers.dropout(W_9, rate=dropout_rate, training=tf_is_training)  
     b_9 = tf.Variable(tf.zeros([layer[8]]))
@@ -283,7 +249,7 @@ def neural_net_model(X_data,input_dim):
     layer_9= tf.nn.relu(layer_9)
 ################
 ################
-    # layer 2 multiplying and adding bias then activation function
+    # layer 10 multiplying and adding bias then activation function
     W_10 = tf.Variable(tf.random_normal([layer[8],layer[9]],mean=0.0,stddev=0.01)*np.sqrt(1/layer[8]))
     W_10 = tf.layers.dropout(W_10, rate=dropout_rate, training=tf_is_training)  
     b_10 = tf.Variable(tf.zeros([layer[9]]))
@@ -297,7 +263,7 @@ def neural_net_model(X_data,input_dim):
     layer_10= tf.nn.relu(layer_10)
 ################
 ################
-    # layer 2 multiplying and adding bias then activation function
+    # layer 11 multiplying and adding bias then activation function
     W_11 = tf.Variable(tf.random_normal([layer[9],layer[10]],mean=0.0,stddev=0.01)*np.sqrt(1/layer[9]))
     W_11 = tf.layers.dropout(W_11, rate=dropout_rate, training=tf_is_training)  
     b_11 = tf.Variable(tf.zeros([layer[10]]))
@@ -311,7 +277,7 @@ def neural_net_model(X_data,input_dim):
     layer_11= tf.nn.relu(layer_11)
 ################
     ################
-    # layer 2 multiplying and adding bias then activation function
+    # layer 12 multiplying and adding bias then activation function
     W_12 = tf.Variable(tf.random_normal([layer[10],layer[11]],mean=0.0,stddev=0.01)*np.sqrt(1/layer[10]))
     W_12 = tf.layers.dropout(W_12, rate=dropout_rate, training=tf_is_training)  
     b_12 = tf.Variable(tf.zeros([layer[11]]))
@@ -325,7 +291,7 @@ def neural_net_model(X_data,input_dim):
     layer_12= tf.nn.relu(layer_12)
 ################
 ################
-    # layer 2 multiplying and adding bias then activation function
+    # layer 13 multiplying and adding bias then activation function
     W_13 = tf.Variable(tf.random_normal([layer[11],1],mean=0.0,stddev=0.01)*np.sqrt(1/layer[11]))
     W_13 = tf.layers.dropout(W_13, rate=dropout_rate, training=tf_is_training)  
     b_13 = tf.Variable(tf.zeros(1))
@@ -340,11 +306,12 @@ def neural_net_model(X_data,input_dim):
 
 
 
-
+#set the tensorflow variable first
 X = tf.placeholder("float32",[None, dimention],name="my_x")
 Y = tf.placeholder("float32",name="my_y")
 tf_is_training = tf.placeholder(tf.bool, None) 
 
+#cost function
 pred = neural_net_model(X,dimention)
 cost = tf.sqrt(tf.reduce_sum(tf.pow(pred-Y, 2))/n_samples)
 # our mean squared error cost function
@@ -370,11 +337,7 @@ with tf.Session() as sess:
     # Fit all training data
     for epoch in range(training_epochs):
         for (x, y) in get_batch(train_x,train_y,batch_size):
-#            x = x.reshape(x.shape[0],batch_size)
-#            x=np.transpose(x)
-#            y = y.reshape(y.shape[0],1)
             sess.run(optimizer, feed_dict={X: x, Y: y,tf_is_training: True})
-#            cost_history = np.append(cost_history,sess.run(cost,feed_dict={X:x,Y:y}))
 
         # Display logs per epoch step
         if (epoch+1) % display_step == 0:
@@ -386,11 +349,6 @@ with tf.Session() as sess:
             cost_history_train = np.append(cost_history_train,sess.run(cost,feed_dict={X:train_x,Y:train_y,tf_is_training: False}))
             cost_history_valid = np.append(cost_history_valid,sess.run(cost,feed_dict={X:val_x,Y:val_y,tf_is_training: False}))
 
-#            print("Epoch:", '%04d' % (epoch+1), "cost=", "{:.9f}".format(c))
-            
-#            print("Epoch:", '%04d' % (epoch+1), "cost=", "{:.9f}".format(c), \
-#                 "W=", sess.run(W),"b=", sess.run(b))
-
     print("Optimization Finished!  Start for the validation")
     training_cost = sess.run(cost, feed_dict={X: train_x, Y: train_y,tf_is_training: False})
     cost_valid = sess.run(cost,feed_dict={X:val_x,Y:val_y,tf_is_training: False})
@@ -399,17 +357,7 @@ with tf.Session() as sess:
     #learning rate監控
     cost_history_plot=np.append(cost_history_plot,training_cost)
     
-## cost history tracking
-#    plt.figure(2)
-##    xx=np.arange(len(cost_history_train))*display_step
-#    plt.plot(cost_history_train,'r+',label='train line')
-##    valid_plot=np.arange(len(cost_history_valid))*display_step
-#    plt.plot(cost_history_valid,'bo',label='val line')
-##    plt.axis([0,valid_plot,0,np.max(cost_history_valid)])
-#    plt.legend(loc='upper right')
-#    plt.show()
-#    plt.pause(0.1)
-    
+
     pred_y = sess.run(pred, feed_dict={X: val_x,tf_is_training: False})
     rmse=tf.sqrt(tf.reduce_sum(tf.pow(pred_y-val_y, 2))/n_samples)
     print("RMSE: %.4f" % sess.run(rmse)) 
@@ -418,20 +366,18 @@ with tf.Session() as sess:
     oSess = sess
     oSaver.save(oSess,"./car_project_model")
 
-
 #================================plot==========================================
+# cost visualisation for training set and validation set
 plt.figure(2)
 xx=np.arange(len(cost_history_train))*display_step
 plt.plot(xx,cost_history_train,label='train line')
 valid_plot=np.arange(len(cost_history_valid))*display_step
 plt.plot(valid_plot,cost_history_valid,label='val line')
-#    plt.axis([0,valid_plot,0,np.max(cost_history_valid)])
 plt.legend(loc='upper right')
-
 plt.show()
 plt.pause(0.1)
     
-    #視覺化 fit plot
+#visualisation fit plot
 print("finish, plot the scatter figure")
 plt.figure(3)
 fig, ax = plt.subplots()
@@ -444,8 +390,10 @@ plt.xlim((0,250000))
 plt.show()   
 plt.pause(0.1)
     
+# calculate the processing time
 endtime = datetime.datetime.now()
 print ("the processing time is :",(endtime - starttime).seconds,"seconds") 
+
 # =============================================================================
 # start for testing set
 # =============================================================================
@@ -468,7 +416,7 @@ with tf.Session() as sess:
     rmse=tf.sqrt(tf.reduce_sum(tf.pow(pred_y-test_y, 2))/n_samples_test)
     print("RMSE: %.4f" % sess.run(rmse))
 
-    #視覺化 fit plot
+    #visualisation fit plot
     print("finish, plot the scatter figure")
     plt.figure(4)
     fig, ax = plt.subplots()
@@ -483,106 +431,5 @@ with tf.Session() as sess:
     
 endtime = datetime.datetime.now()
 print ("the processing time is :",(endtime - starttime).seconds,"seconds")  
-#    test_y=pd.DataFrame({"SalePrice":test_y})   
-    
-#    #還原PCA
-#    test_y=pca.inverse_transform(test_y)    
-#    #還原標準化
-#    test_y=scaler.inverse_transform(test_y)
-
-#====================
-#=====================
-      
-    
-#cost_history = np.empty(shape=[1],dtype=float)
-#cost_history_plot=[]
-#
-#X = tf.placeholder("float32",[None, dimention],name="my_x")
-#Y = tf.placeholder("float32",name="my_y")
-#
-## our mean squared error cost function
-## Gradinent Descent optimiztion just discussed above for updating weights and biases
-#cost,prediction = neural_net_model(X,dimention)
-#correct = tf.equal(tf.argmax(prediction,1),tf.argmax(Y,1))  #get the max reaction and decide to the prediction class.
-#accuracy = tf.reduce_mean(tf.cast(correct,'float'))# cast 表示將原來的data轉換為其他type
-#optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
-#
-#with tf.Session() as sess:
-#    # Run the initializer
-##    sess = tf.InteractiveSession()    
-#    init = tf.global_variables_initializer()
-#    sess.run(init)
-#
-#
-#    # Fit all training data
-#    for epoch in range(training_epochs):
-#        for (x, y) in get_batch(train_x,train_y,batch_size):
-##            x = x.reshape(x.shape[0],batch_size)
-##            x=np.transpose(x)
-##            y = y.reshape(y.shape[0],1)
-#            sess.run(optimizer, feed_dict={X: x, Y: y})
-##            cost_history = np.append(cost_history,sess.run(cost,feed_dict={X:x,Y:y}))
-#
-#        # Display logs per epoch step
-#        if (epoch+1) % display_step == 0:
-#            c = sess.run(cost, feed_dict={X: train_x, Y:train_y})
-#            pred_valid = sess.run(cost,feed_dict={X:val_x,Y:val_y})
-#            pred_train = sess.run(cost,feed_dict={X:train_x,Y:train_y})           
-#            print('Number: %d epoch' % (epoch+1),'\n','valid cost: ' , pred_valid)
-#            print('Number: %d epoch' % (epoch+1),'\n','train cost: ' , pred_train)
-#            
-#            accuracy_valid = sess.run(accuracy,feed_dict={x:val_x,y:val_y})
-#            accuracy_train = sess.run(accuracy,feed_dict={x:train_x,y:train_y})           
-#            print('valid Acc: ' , accuracy_valid)
-#            print('Train Acc: ' , accuracy_train)
-#
-#
-#            cost_history = np.append(cost_history,sess.run(cost,feed_dict={X:train_x,Y:train_y}))
-##            print("Epoch:", '%04d' % (epoch+1), "cost=", "{:.9f}".format(c))
-#            
-##            print("Epoch:", '%04d' % (epoch+1), "cost=", "{:.9f}".format(c), \
-##                 "W=", sess.run(W),"b=", sess.run(b))
-#
-#    print("Optimization Finished!")
-##    print("Training cost=", training_cost,'\n')
-#    
-#    #learning rate監控
-#    cost_history_plot=np.append(cost_history_plot,cost_history)
-#    cost_history_forLR=cost_history_plot
-#    
-##   show final accuracy
-#    pred_valid = sess.run(cost,feed_dict={X:val_x,Y:val_y})
-#    pred_train = sess.run(cost,feed_dict={X:train_x,Y:train_y})           
-#    print('Number: %d epoch' % (epoch+1),'\n','valid cost: ' , pred_valid)
-#    print('Number: %d epoch' % (epoch+1),'\n','train cost: ' , pred_train)
-#
-#    accuracy_valid = sess.run(accuracy,feed_dict={x:val_x,y:val_y})
-#    accuracy_train = sess.run(accuracy,feed_dict={x:train_x,y:train_y})           
-#    print('valid Acc: ' , accuracy_valid)
-#    print('Train Acc: ' , accuracy_train)
-#    
-##   save
-#    oSaver = tf.train.Saver()
-#    oSess = sess
-#    oSaver.save(oSess,"./crime_model")
-#
-#
-##plot different learning rates figure
-##cost_history_plot=np.array(cost_history_plot)
-##ja.Plot(np.arange(len(cost_history_plot)),cost_history_plot)
-#
-## 畫圖驗證cost, epoch, optimal point============================================
-##=============================================================================
-#    plt.figure(4)
-#    fig, ax = plt.subplots()
-#    ax.plot(cost_history,'r')
-#    ax.set_xlabel('epoch')
-#    ax.set_ylabel('Cost')
-#    A=np.array(cost_history)
-#    best_epoch=np.argmin(A)
-#    print('best_cost:',min(cost_history),'achieved at epoch:',best_epoch)
-#    plt.show()   
-#    plt.pause(0.1)   
-    
     
     
