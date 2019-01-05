@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Car Point</string>
+
+    <string name="input_error_email">Please check your email</string>
+    <string name="input_error_password">Password field must be filled</string>
+    <string name="doesnt_match">Passwords do not match</string>
+    <string name="input_error_username">Please enter username</string>
+    <string name="registration_success">Registered Successfully</string>
+
+    <string name="View_history">View history</string>
+    <string name="Settings">Setting</string>
+    <string name="Log_out">Log Out</string>
+
+</resources>

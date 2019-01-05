@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/View_history"
+        android:title="@string/View_history"
+        app:showAsAction="never"/>
+    <item android:id="@+id/Settings"
+        android:title="@string/Settings"
+        app:showAsAction="never"/>
+    <item android:id="@+id/Log_out"
+        android:title="@string/Log_out"
+        app:showAsAction="never"/>
+
+
+</menu>

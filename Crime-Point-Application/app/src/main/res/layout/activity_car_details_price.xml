@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CarDetailsPrice">
+
+    <EditText
+        android:id="@+id/MakeEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="43dp"
+        android:ems="10"
+        android:hint="Manufacturer"
+        android:textColorHint="@color/colorAccent"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/ModelEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/MakeEditText"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="106dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Model"
+        android:textColorHint="@color/colorAccent"/>
+
+    <EditText
+        android:id="@+id/CarYearEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/MakeEditText"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="163dp"
+        android:ems="10"
+        android:inputType="number"
+        android:hint="Year"
+        android:textColorHint="@color/colorAccent"/>
+
+    <EditText
+        android:id="@+id/CarMileAgeEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/MakeEditText"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="222dp"
+        android:ems="10"
+        android:inputType="number"
+        android:hint="Mileage"
+        android:textColorHint="@color/colorAccent"/>
+
+    <EditText
+        android:id="@+id/CityEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/MakeEditText"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="279dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="City"
+        android:textColorHint="@color/colorAccent"/>
+
+    <EditText
+        android:id="@+id/PriceEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="274dp"
+        android:ems="10"
+        android:inputType="number"
+        android:hint="Price"
+        android:textColorHint="@color/colorAccent"/>
+
+    <Button
+        android:id="@+id/CheckPrice"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/PriceNextButton"
+        android:text="Check price" />
+
+    <Button
+        android:id="@+id/PriceNextButton"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="Next" />
+
+</RelativeLayout>

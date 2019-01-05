@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "572328752319",
+    "firebase_url": "https://carpoint-37283.firebaseio.com",
+    "project_id": "carpoint-37283",
+    "storage_bucket": "carpoint-37283.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:572328752319:android:06f924dc16fe4fa5",
+        "android_client_info": {
+          "package_name": "point.dot.carpoint"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "572328752319-lkl6hbektpa3s46o1s4pf2dvn4k9gisc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "point.dot.carpoint",
+            "certificate_hash": "3676d8d1ba924b93301e32225ce974d41cc7a4b7"
+          }
+        },
+        {
+          "client_id": "572328752319-edvqk8a7tgifrtsq40fpea7l9pt6gqc5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBa6k_YISFg__HxcIAQ0oNKe7VO5Cl11_Q"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "572328752319-edvqk8a7tgifrtsq40fpea7l9pt6gqc5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
