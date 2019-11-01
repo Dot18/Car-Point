@@ -160,6 +160,8 @@ class Search():
         由pdf读取的table是一个多维数组，首先要将其变成一维数据
         2.
         """
+        if text is None:
+            return[]
         try:
             if text_type == 'table':
                 split_page_list = flatten(text)
